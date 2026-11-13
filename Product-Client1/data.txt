@@ -1,0 +1,276 @@
+SERVICE
+public List<Message> getChatHistory(String conversationId) {
+    return chatMemory.get(conversationId);
+}
+
+CONTROLLER
+package com.iss.Product_Client1.controllers;
+
+import com.iss.Product_Client1.services.ClientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/ai")
+public class ClientController {
+
+    @Autowired
+    ClientService clientService;
+
+    private final String conversationId = "shopping-chat";
+
+    @GetMapping("")
+    public String home(Model model) {
+
+        model.addAttribute("conversationId", conversationId);
+        model.addAttribute("history",
+                clientService.getChatHistory(conversationId));
+
+        return "aihome";
+    }
+
+    @PostMapping("/chat")
+    public String chat(
+            @RequestParam String prompt,
+            Model model) {
+
+        String response = clientService.chat(prompt, conversationId);
+
+        model.addAttribute("prompt", "");
+        model.addAttribute("response", response);
+        model.addAttribute("conversationId", conversationId);
+
+        model.addAttribute("history",
+                clientService.getChatHistory(conversationId));
+
+        return "aihome";
+    }
+}
+HTML
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Shopping Cart Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            min-height: 85vh;
+            margin: 40px auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Left sidebar */
+        .sidebar {
+            width: 320px;
+            background: #f9fafb;
+            border-right: 1px solid #ddd;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            color: #2563eb;
+            font-size: 20px;
+            margin-top: 0;
+        }
+
+        .history-item {
+            padding: 12px;
+            margin-bottom: 12px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .history-item.user {
+            border-left: 4px solid #2563eb;
+        }
+
+        .history-item.assistant {
+            border-left: 4px solid #16a34a;
+        }
+
+        .history-role {
+            font-weight: bold;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .history-content {
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        /* Right chat area */
+        .chat-container {
+            flex: 1;
+            padding: 30px;
+            min-width: 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .response-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f7ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 8px;
+        }
+
+        .response-box h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        .response-text {
+            white-space: pre-wrap;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        @media(max-width: 750px) {
+            .main-container {
+                flex-direction: column;
+                margin: 10px;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <!-- LEFT: Conversation History -->
+    <aside class="sidebar">
+
+        <h2>Conversation History</h2>
+
+        <div th:if="${history == null or #lists.isEmpty(history)}">
+            <p>No conversation history yet.</p>
+        </div>
+
+        <div th:each="message : ${history}"
+             class="history-item"
+             th:classappend="${message.messageType.name() == 'USER'} ? ' user' : ' assistant'">
+
+            <div class="history-role"
+                 th:text="${message.messageType.name() == 'USER'} ? 'YOU' : 'AI ASSISTANT'">
+            </div>
+
+            <div class="history-content"
+                 th:text="${message.text}">
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- RIGHT: Chat Interface -->
+    <main class="chat-container">
+
+        <h1>AI Shopping Cart Assistant</h1>
+
+        <form th:action="@{/ai/chat}" method="post">
+
+            <label for="prompt">Enter your prompt:</label>
+
+            <textarea
+                    id="prompt"
+                    name="prompt"
+                    placeholder="Example: Show me all available products"
+                    required></textarea>
+
+            <button type="submit">Chat</button>
+
+        </form>
+
+        <div class="response-box" th:if="${response != null}">
+
+            <h3>AI Response</h3>
+
+            <div class="response-text"
+                 th:text="${response}">
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

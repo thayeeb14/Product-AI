@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Shopping Cart Assistant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2563eb;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #2563eb;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .response-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f7ff;
+            border-left: 5px solid #2563eb;
+            border-radius: 8px;
+        }
+
+        .response-box h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        .response-text {
+            white-space: pre-wrap;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .prompt-text {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>AI Shopping Cart Assistant</h1>
+
+    <!-- Chat Form -->
+    <form th:action="@{/ai/chat}" method="post">
+
+        <label for="prompt">Enter your prompt:</label>
+
+        <textarea
+                id="prompt"
+                name="prompt"
+                placeholder="Example: Show me all available products"
+                required
+                th:text="${prompt}">
+        </textarea>
+
+        <button type="submit">Chat</button>
+
+    </form>
+
+    <!-- AI Response -->
+    <div class="response-box" th:if="${response != null}">
+
+        <h3>AI Response</h3>
+
+        <div class="response-text"
+             th:text="${response}">
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "defaults": {
+    "project": 1,
+    "env": 1
+  },
+  "actives": {
+    "project": 1,
+    "env": 1
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "104918000000013073",
+      "name": "Product-Client-Ai",
+      "domain": {
+        "id": "50047610662",
+        "name": "product-client-ai-60095647451.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "60095647451",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}

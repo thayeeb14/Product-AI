@@ -1,0 +1,8 @@
+{
+  "appsail": [
+    {
+      "source": ".",
+      "name": "product-client-ai"
+    }
+  ]
+}

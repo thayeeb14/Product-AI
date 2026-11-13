@@ -1,0 +1,19 @@
+
+# Maven build files
+**/target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Java
+*.class
+
+# Logs
+*.log
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
